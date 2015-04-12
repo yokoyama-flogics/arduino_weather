@@ -38,7 +38,7 @@
 void Barometer::init(void)
 {
     Wire.begin();
-    Serial.print("Temperaturet: ");
+    // Serial.print("Temperaturet: ");
     ac1 = bmp085ReadInt(0xAA);
     ac2 = bmp085ReadInt(0xAC);
     ac3 = bmp085ReadInt(0xAE);
@@ -50,13 +50,15 @@ void Barometer::init(void)
     mb = bmp085ReadInt(0xBA);
     mc = bmp085ReadInt(0xBC);
     md = bmp085ReadInt(0xBE);
-    Serial.print("Temperaturet2: ");
+    // Serial.print("Temperaturet2: ");
 }
 
 // Read 1 byte from the BMP085 at 'address'
 // Return: the read byte;
 char Barometer::bmp085Read(unsigned char address)
 {
+	int ct = 0;
+
     //Wire.begin();
     unsigned char data;
     Wire.beginTransmission(BMP085_ADDRESS);
@@ -64,7 +66,11 @@ char Barometer::bmp085Read(unsigned char address)
     Wire.endTransmission();
 
     Wire.requestFrom(BMP085_ADDRESS, 1);
-    while(!Wire.available());
+    while(!Wire.available()) {
+		delay(1);
+		if (++ ct >= 100)
+			return (char) 0;
+	}
     return Wire.read();
 }
 
@@ -73,12 +79,18 @@ char Barometer::bmp085Read(unsigned char address)
 // Second byte will be from 'address'+1
 short Barometer::bmp085ReadInt(unsigned char address)
 {
+	int ct = 0;
+
     unsigned char msb, lsb;
     Wire.beginTransmission(BMP085_ADDRESS);
     Wire.write(address);
     Wire.endTransmission();
     Wire.requestFrom(BMP085_ADDRESS, 2);
-    while(Wire.available()<2);
+    while(Wire.available()<2) {
+		delay(1);
+		if (++ ct >= 100)
+			return (short) 0;
+	}
     msb = Wire.read();
     lsb = Wire.read();
     return (short) msb<<8 | lsb;
