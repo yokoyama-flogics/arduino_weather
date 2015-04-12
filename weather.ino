@@ -6,6 +6,7 @@
 #include <Wire.h>
 #include <math.h>
 #include "Barometer.h"
+#include "HTU21D.h"
 
 enum {
 	TIME_STEP = 10,			// Wakeup Period (ms)
@@ -18,6 +19,7 @@ enum {
 static unsigned long next_wakeup;
 static int debug = 0;
 Barometer myBarometer;
+HTU21D myHumid;
 
 // the setup routine runs once when you press reset:
 void setup() {                
@@ -26,6 +28,7 @@ void setup() {
 	Serial.begin(9600);  
 	Wire.begin();
 	myBarometer.init();
+	myHumid.setResolution(1 << 7 | 1 << 0);
 }
 
 /*
@@ -46,6 +49,8 @@ void loop() {
 	float temp;
 	float pres;
 	float pres_sea;
+	float temp2;
+	float humid;
 
 	next_wakeup = millis() + TIME_STEP;
 
@@ -60,6 +65,7 @@ void loop() {
 			digitalWrite(LED, led_status);
 			led_ct = 0;
 
+#if 0
 			temp = myBarometer.bmp085GetTemperature(
 				myBarometer.bmp085ReadUT());
 			pres = myBarometer.bmp085GetPressure(
@@ -69,6 +75,11 @@ void loop() {
 			Serial.println(temp, 1);
 			Serial.println(pres, 1);
 			Serial.println(pres_sea, 1);
+#endif
+			temp2 = myHumid.readTemperature();
+			humid = myHumid.readHumidity();
+			Serial.println(temp2, 1);
+			Serial.println(humid, 1);
 		}
 
 		wait();
