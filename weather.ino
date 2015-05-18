@@ -42,6 +42,11 @@ void loop(void)
 {
 	int i;
 	int cts;
+	float temp;
+	float pres;
+	float pres_sea;
+	float temp2;
+	float humid;
 
 	/*
 	 * Enable Pin Change Interrupts
@@ -85,10 +90,10 @@ void loop(void)
 			
 		Serial.print(temp, 1);
 		Serial.print(" C, ");
-		Serial.println(pres, 1);
+		Serial.print(pres, 1);
 		Serial.print(" hPa, ");
-		Serial.println(pres_sea, 1);
-		Serial.println(" hPa_sea");
+		Serial.print(pres_sea, 1);
+		Serial.println(" hPa_sea BMP180");
 
 		temp2 = myHumid.readTemperature();
 		humid = myHumid.readHumidity();
