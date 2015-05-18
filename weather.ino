@@ -65,7 +65,7 @@ void loop() {
 			digitalWrite(LED, led_status);
 			led_ct = 0;
 
-#if 0
+#if 1
 			temp = myBarometer.bmp085GetTemperature(
 				myBarometer.bmp085ReadUT());
 			pres = myBarometer.bmp085GetPressure(
