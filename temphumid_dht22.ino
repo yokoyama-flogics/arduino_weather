@@ -1,5 +1,12 @@
 #include <avr/sleep.h>
 #include <DHT22.h>
+#include <Wire.h>
+#include <math.h>
+#include "Barometer.h"
+#include "HTU21D.h"
+
+Barometer myBarometer;
+HTU21D myHumid;
 
 extern volatile unsigned long timer0_millis;
 
@@ -16,6 +23,10 @@ void setup(void)
 
 	pinMode(LED_PIN, OUTPUT);
 	pinMode(XBEE_CTS_PIN, INPUT);
+
+	Wire.begin();
+	myBarometer.init();
+	myHumid.setResolution(1 << 7 | 1 << 0);
 
 	delay(3000);		// To ensure DHT22 is correctly initialized
 }
@@ -63,7 +74,29 @@ void loop(void)
 		};
 
 		digitalWrite(LED_PIN, HIGH);
+
 		loop_dht22();
+
+		temp = myBarometer.bmp085GetTemperature(
+			myBarometer.bmp085ReadUT());
+		pres = myBarometer.bmp085GetPressure(
+			myBarometer.bmp085ReadUP()) / 100.0;
+		pres_sea = pres / pow(1.0 - 92.0/44330, 5.255);
+			
+		Serial.print(temp, 1);
+		Serial.print(" C, ");
+		Serial.println(pres, 1);
+		Serial.print(" hPa, ");
+		Serial.println(pres_sea, 1);
+		Serial.println(" hPa_sea");
+
+		temp2 = myHumid.readTemperature();
+		humid = myHumid.readHumidity();
+		Serial.print(temp2, 1);
+		Serial.print(" C, ");
+		Serial.print(humid, 1);
+		Serial.println(" %  HTU21D");
+
 		digitalWrite(LED_PIN, LOW);
 
 		while ((cts = digitalRead(XBEE_CTS_PIN)) == 0) {
