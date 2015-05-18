@@ -18,14 +18,14 @@ void loop_dht22(void)
       Serial.print(myDHT22.getTemperatureC());
       Serial.print(" C, ");
       Serial.print(myDHT22.getHumidity());
-      Serial.println(" %");
+      Serial.println(" % DHT22");
       break;
     case DHT_ERROR_CHECKSUM:
       Serial.print("# check sum error ");
       Serial.print(myDHT22.getTemperatureC());
       Serial.print("C ");
       Serial.print(myDHT22.getHumidity());
-      Serial.println("%");
+      Serial.println("% DHT22");
       break;
     case DHT_BUS_HUNG:
       Serial.println("# BUS Hung ");
