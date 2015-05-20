@@ -1,3 +1,5 @@
+#define USE_XBEE
+
 #include <avr/sleep.h>
 #include <DHT22.h>
 #include <Wire.h>
@@ -48,6 +50,7 @@ void loop(void)
 	float temp2;
 	float humid;
 
+#ifdef USE_XBEE
 	/*
 	 * Enable Pin Change Interrupts
 	 */
@@ -58,18 +61,24 @@ void loop(void)
 	PCICR = 1 << 2;		// Enable PCINT2 only
 
 	set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+#endif
 
 	/*
 	 * Enter main loop
 	 */
 	for (;;) {
+#ifdef USE_XBEE
 		sleep_enable();
 		sleep_cpu();			// NOT sleep_mode();
+#else
+		delay(2000);
+#endif
 
 		/*
 		 * Quick hack to cheat millis().  With out this, DHT22 library
 		 * says it is called to quickly.
 		 */
+#ifdef USE_XBEE
 		timer0_millis += 60 * 1000;	// Quick hack to cheat millis()
 
 		if ((cts = digitalRead(XBEE_CTS_PIN)) == 1) {
@@ -77,10 +86,12 @@ void loop(void)
 			delay(10);
 			continue;
 		};
+#endif
 
 		digitalWrite(LED_PIN, HIGH);
 
 		loop_dht22();
+		delay(50);		// testing to avoild mojibake
 
 		temp = myBarometer.bmp085GetTemperature(
 			myBarometer.bmp085ReadUT());
@@ -104,9 +115,11 @@ void loop(void)
 
 		digitalWrite(LED_PIN, LOW);
 
+#ifdef USE_XBEE
 		while ((cts = digitalRead(XBEE_CTS_PIN)) == 0) {
 			// To ensure serial data is sent
 			delay(1);
 		}
+#endif
 	}
 }
