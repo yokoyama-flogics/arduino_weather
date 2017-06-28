@@ -13,6 +13,8 @@ This software runs on Arduino Fio and XBee to capture temperature, humidity and 
 
 You may omit some sensors by modifying code.
 
+My Arduino Fio is retired version.  Please refer https://www.arduino.cc/en/Main/ArduinoBoardFio .
+
 ## Software (Library) Requirement
 
 - Arduino-DHT22 library.  Downloadable at https://github.com/nethoncho/Arduino-DHT22 .
